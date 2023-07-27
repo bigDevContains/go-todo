@@ -50,6 +50,12 @@ func init() {
 	db = sess.DB(dbName)
 }
 
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func main() {
 
 }
