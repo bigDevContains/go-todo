@@ -57,6 +57,18 @@ func main() {
 	r.Mount("/todo", todoHandlers())
 }
 
+func todoHandlers() http.Handler{
+	rg := chi.NewRouter()
+	rg.Group(func(r chi.Router) {
+		r.Get("/", fetchTodos)
+		r.Post("/", createTodos)
+		r.Put("/{id}", updateTodo)
+		r.Delete("/{id}", deleteTodo)
+	})
+	return rg
+
+}
+
 func checkErr(err error) {
 	if err != nil {
 		log.Fatal(err)
