@@ -30,9 +30,25 @@ type(
 	todoModel struct {
 		ID		bson.ObjectId `bson:"_id,omitempty"`
 		Title	string `bson:"title"`
-		Completed bool `b`
+		Completed bool `bson:"completed"`
+		CreatedAt time.Time `bson:"createdAt"`
+	}
+
+	todo struct {
+		ID		string `json:"id"`
+		Title 	string `json:"title"`
+		Completed string `json:"completed"`
+		CreatedAt time.Time `json:"createdAt"`
 	}
 )
+
+func init() {
+	rnd = renderer.New()
+	sess, err := mgo.Dial(hostName)
+	checkErr(err)
+	sess.SetMode(mgo.Monotonic, true)
+	db = sess.DB(dbName)
+}
 
 func main() {
 
