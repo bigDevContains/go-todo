@@ -1,17 +1,18 @@
 package main
 
-import(
+import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strings"
-	"time"
 	"os"
 	"os/signal"
+	"strings"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/thedevsaddam/renderer"
+	"golang.org/x/net/context"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -50,11 +51,39 @@ func init() {
 	db = sess.DB(dbName)
 }
 
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	err := 
+}
+
 func main() {
+	stopChan := make(chan os.Signal)
+	signal.Notify(stopChan, os.Interrupt)
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Get("/", homeHandler)
 	r.Mount("/todo", todoHandlers())
+
+	srv := &http.Server{
+		Addr: port,
+		Handler: r,
+		ReadTimeout: 60 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout: 60 * time.Second,
+	}
+	go func() {
+		log.Println("listening on port", port)
+		if err:=srv.ListenAndServe(); err != nil {
+			log.Printf("listen:%s\n", err)
+		}
+	}()
+
+	<-stopChan
+	log.Println("shutting down server...")
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	srv.Shutdown(ctx)
+	defer cancel(
+		log.Println("sever gracefully stopped!"),
+	)
 }
 
 func todoHandlers() http.Handler{
