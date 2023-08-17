@@ -81,6 +81,22 @@ func fetchTodos(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func createTodos(w http.ResponseWriter, r *http.Request) {
+	var t todo
+
+	if err := json.NewDecoder(r.Body).Decode(&t); err!=nil {
+		rnd.JSON(w, http.StatusProcessing, err)
+		return
+	}
+
+	if t.Title == ""{
+		rnd.JSON(w, http.StatusProcessing, renderer.M{
+			"message":"The title is required",
+		})
+		return
+	}
+}
+
 func main() {
 	stopChan := make(chan os.Signal)
 	signal.Notify(stopChan, os.Interrupt)
